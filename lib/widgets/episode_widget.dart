@@ -1,26 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:toon_practice/models/webtoon_episode_model.dart';
+import 'package:toon_practice/models/movie_detail_model.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-class Episode extends StatelessWidget {
-  const Episode({
+class MovieDetail extends StatelessWidget {
+  const MovieDetail({
     super.key,
-    required this.episode,
-    required this.webtoonId,
+    required this.movie,
   });
 
-  final String webtoonId;
-  final WebtoonEpisodeModel episode;
+  final MovieDetailModel movie;
 
-  onButtonTap() async {
-    await launchUrlString(
-        "https://comic.naver.com/webtoon/detail?titleId=$webtoonId&no=${episode.id}");
-  }
+  // onButtonTap() async {
+  //   await launchUrlString(movie.homepage);
+  // }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onButtonTap,
+      // onTap: onButtonTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
@@ -39,14 +36,38 @@ class Episode extends StatelessWidget {
             vertical: 10,
             horizontal: 20,
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                episode.title,
+                movie.title,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                movie.about,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Genre: ${movie.genre}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Rating: ${movie.rating}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
                 ),
               ),
               const Icon(

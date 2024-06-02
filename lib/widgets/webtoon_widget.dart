@@ -16,13 +16,14 @@ Future<Image> fetchImage(String url) async {
 }
 
 class Webtoon extends StatelessWidget {
-  final String title, thumb, id;
+  final String title, thumb, id, listkind;
 
   const Webtoon({
     super.key,
     required this.title,
     required this.thumb,
     required this.id,
+    required this.listkind,
   });
 
   @override
@@ -36,6 +37,7 @@ class Webtoon extends StatelessWidget {
               title: title,
               thumb: thumb,
               id: id,
+              listkind: listkind,
             ),
             fullscreenDialog: true,
           ),
@@ -44,7 +46,7 @@ class Webtoon extends StatelessWidget {
       child: Column(
         children: [
           Hero(
-            tag: id,
+            tag: '$id-$listkind',
             child: FutureBuilder(
               future: fetchImage(thumb),
               builder: (context, AsyncSnapshot<Image> imageSnapshot) {

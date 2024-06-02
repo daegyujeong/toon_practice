@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:toon_practice/models/webtoon_model.dart';
+import 'package:toon_practice/models/movie_model.dart';
 import 'package:toon_practice/services/api_service.dart';
 import 'package:toon_practice/widgets/webtoon_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
-  final Future<List<WebtoonModel>> webtoons = ApiService.getTodaysToons();
+  final Future<List<MovieModel>> popularMovies = ApiService.getPopularMovie();
+  final Future<List<MovieModel>> nowPlayingMovies =
+      ApiService.getNowPlayingMovies();
+  final Future<List<MovieModel>> upcomingMovies =
+      ApiService.getUpcomingMovies();
 
   @override
   Widget build(BuildContext context) {
@@ -17,43 +21,156 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         foregroundColor: Colors.green,
         title: const Text(
-          "어늘의 웹툰",
+          "Movieflix",
           style: TextStyle(
             fontSize: 24,
           ),
         ),
       ),
-      body: FutureBuilder(
-        future: webtoons, // future는 비동기로 처리할 함수또는 데이터를 가지고 있음
-        builder: (context, snapshot) {
-          // snapshot은 future의 결과를 가지고 있음 // context는 현재 위젯의 정보를 가지고 있음
-          if (snapshot.hasData) {
-            return Column(
-              children: [
-                const SizedBox(
-                  height: 50,
-                ),
-                Expanded(child: makeList(snapshot))
-              ],
-            );
-          }
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 20,
+            ),
+            const Text(
+              "Popular Movies",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            FutureBuilder(
+              future: popularMovies,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return SizedBox(
+                    height: 220,
+                    child: makePopularMoviesList(snapshot),
+                  );
+                }
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            const Text(
+              "Now in Cinemas",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            FutureBuilder(
+              future: nowPlayingMovies,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return SizedBox(
+                    height: 220,
+                    child: makeNowPlayingMoviesList(snapshot),
+                  );
+                }
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            const Text(
+              "Coming Soon",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            FutureBuilder(
+              future: upcomingMovies,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return SizedBox(
+                    height: 220,
+                    child: makeUpcomingMoviesList(snapshot),
+                  );
+                }
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  ListView makeList(AsyncSnapshot<List<WebtoonModel>> snapshot) {
+  ListView makePopularMoviesList(AsyncSnapshot<List<MovieModel>> snapshot) {
     return ListView.separated(
       scrollDirection: Axis.horizontal,
       itemCount: snapshot.data!.length,
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       itemBuilder: (context, index) {
-        var webtoon = snapshot.data![index];
+        var movie = snapshot.data![index];
         return Webtoon(
-            title: webtoon.title, thumb: webtoon.thumb, id: webtoon.id);
+            title: movie.title,
+            thumb: movie.thumb,
+            id: movie.id,
+            listkind: 'popular');
+      },
+      separatorBuilder: (context, index) {
+        return const SizedBox(
+          width: 20,
+        );
+      },
+    );
+  }
+
+  ListView makeNowPlayingMoviesList(AsyncSnapshot<List<MovieModel>> snapshot) {
+    return ListView.separated(
+      scrollDirection: Axis.horizontal,
+      itemCount: snapshot.data!.length,
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      itemBuilder: (context, index) {
+        var movie = snapshot.data![index];
+        return Webtoon(
+            title: movie.title,
+            thumb: movie.thumb,
+            id: movie.id,
+            listkind: 'nowPlaying');
+      },
+      separatorBuilder: (context, index) {
+        return const SizedBox(
+          width: 20,
+        );
+      },
+    );
+  }
+
+  ListView makeUpcomingMoviesList(AsyncSnapshot<List<MovieModel>> snapshot) {
+    return ListView.separated(
+      scrollDirection: Axis.horizontal,
+      itemCount: snapshot.data!.length,
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      itemBuilder: (context, index) {
+        var movie = snapshot.data![index];
+        return Webtoon(
+            title: movie.title,
+            thumb: movie.thumb,
+            id: movie.id,
+            listkind: 'upcoming');
       },
       separatorBuilder: (context, index) {
         return const SizedBox(
