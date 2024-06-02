@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:toon_practice/models/webtoon_detail_model.dart';
 import 'package:toon_practice/models/webtoon_model.dart';
+import 'package:toon_practice/models/webtoon_episode_model.dart';
 
 class ApiService {
   static const String baseUrl =
@@ -11,18 +13,42 @@ class ApiService {
   static Future<List<WebtoonModel>> getTodaysToons() async {
     List<WebtoonModel> webtoonInstances = [];
     final url = Uri.parse('$baseUrl/$today');
-    print(url);
+    // print(url);
     final response = await http.get(url);
     if (response.statusCode == 200) {
-      print(response.body);
+      // print(response.body);
       final List<dynamic> webtoons = jsonDecode(response
           .body); // list 로 된 dynamic 타입의 json 데이터를 받아오기 위해 List<dynamic>으로 받아옴
       for (var webtoon in webtoons) {
-        final toon = WebtoonModel.fromJson(webtoon);
-        print(toon);
-        webtoonInstances.add(WebtoonModel.fromJson(webtoon));
+        final instance = WebtoonModel.fromJson(webtoon);
+        webtoonInstances.add(instance);
       }
       return webtoonInstances;
+    }
+    throw Error();
+  }
+
+  static Future<WebtoonDetailModel> getToonById(String id) async {
+    final url = Uri.parse("$baseUrl/$id");
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final webtoon = jsonDecode(response.body);
+      return WebtoonDetailModel.fromJson(webtoon);
+    }
+    throw Error();
+  }
+
+  static Future<List<WebtoonEpisodeModel>> getLatestEpisodesById(
+      String id) async {
+    List<WebtoonEpisodeModel> episodesInstances = [];
+    final url = Uri.parse("$baseUrl/$id/episodes");
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final episodes = jsonDecode(response.body);
+      for (var episode in episodes) {
+        episodesInstances.add(WebtoonEpisodeModel.fromJson(episode));
+      }
+      return episodesInstances;
     }
     throw Error();
   }
