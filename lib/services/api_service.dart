@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 import 'package:toon_practice/models/movie_detail_model.dart';
@@ -15,6 +16,9 @@ class ApiService {
   static const String popular = "popular";
   static const String nowPlaying = "now-playing";
   static const String upcoming = "coming-soon";
+  static dynamic _utf8JsonDecode(Uint8List unit) {
+    return jsonDecode(utf8.decode(unit));
+  }
 
   static Future<List<WebtoonModel>> getTodaysToons() async {
     List<WebtoonModel> webtoonInstances = [];
